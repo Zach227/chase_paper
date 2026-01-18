@@ -27,6 +27,9 @@
 %%  June 03--05, 2018, Woodstock, NY}
 \acmISBN{978-1-4503-XXXX-X/2018/06}
 \usepackage{stfloats}
+\usepackage[table]{xcolor}
+\usepackage{makecell}
+
 
 %%
 %% Submission ID.
@@ -190,7 +193,7 @@ We implemented a low-cost data acquisition pipeline for reliable data collection
 We collected data from up to 8 low-cost sensors and 4 high-cost sensors simultatneously.
 Table 1 summarizes the sensors used in this study.
 
-\begin{figure*}[b]
+\begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{figures/pipeline_diagram.jpg}
   \caption{diagram}
@@ -209,26 +212,57 @@ We also used Grafana to create dashboards for data visualization, allowing for r
 We set up a website on our local server to provide easy access to Grafana and out database.
 We also created a page to easily record experiment start and end times in the database and export data in a time-aligned CSV format.
 
+In laboratory testing, used a diesel engine mounted on a test rig with a dynamometer.
+We simulated trucks driving past by using a 3-way solenoid valve to switch between sampling exhaust and ambient room air.
 Air was sampled through an inlet near the engine exhaust and drawn through tubing to be distributed to the high and low-cost sensors.
 In the field, we had one inlet above the road to sample trucks with high exhausts, and one inlet in a speedbump to sample trucks with low exhausts. 
 The low-cost sensors were housed in a metal canister with inlets and outlets allowing them to receive a controlled sample of exaust similar to the high-cost sensors.
-Electrical connection to the low-cost sensors were passed into the canister through an airtight bulkhead connector.
-
+Electrical connections to the low-cost sensors were passed into the canister through an airtight bulkhead connector.
 
 \begin{figure}[htbp]
 	\centering
   \includegraphics[width=0.9\linewidth]{figures/roadside.jpg}
-	\caption{canister}
+	\caption{in-field sampling method}
   \Description{description2}
 	\label{fig:bulkhead}
 \end{figure}
 
 \subsection{Emission Rates}
 
-\begin{itemize}
-\item We calculate emission rates with some equations
-\item We automate peak detection and rate calculation process with some python scripts
-\end{itemize}
+Once we have collected data from trucks, the standard we will use to compare low-cost sensors to high-cost sensors is emission rates. 
+This is more important than directly comparing measured values between low-cost and high-cost sensors, because low-cost sensors still have the potential to identify high-emitting trucks, even if they do to match the high-cost sensors exactly in calibration.
+It would still provide great value if a low-cost sensor could find trucks that are worse relative to other trucks. 
+
+We calculated the fuel base-emission rate of PM and NOx using a the same method as Sugrue et al. 
+For this method, a peak in the data is identified, and the ratio of the pollutant to CO2 is calculated by the ratio of the area under the curve of the peak.
+This ratio is scaled by constants to acheive the proper units of grams of pollutant per kilogram of fuel burned. 
+In equations \ref{eq:pmrate} and \ref{eq:noxrate}, $wfc$ is a constant representing the weight fraction of carbon in diesel fuel (0.87).
+$MC$ is the molar mass of carbon (12 $g/mol$), and MNOx is the molar mass of NO$_2$, which is (46 $g/mol$).
+Multiplying by $10^3$ converts the units to $g/kg$.
+
+\begin{equation}
+PM \ ER = \frac{\int_{t_1}^{t_2} [PM(t_1) - PM(t_2)] dt}{\int_{t_1}^{t_2} [CO_2(t_1) - CO_2(t_2)] dt} \cdot \frac{1}{M C} \cdot wfc \cdot 10^3
+\label{eq:pmrate}
+\end{equation}
+
+\begin{equation}
+NO_x \ ER = \frac{\int_{t_1}^{t_2} [NO_x(t_1) - NO_x(t_2)] dt}{\int_{t_1}^{t_2} [CO_2(t_1) - CO_2(t_2)] dt} \cdot \frac{M \ NO_x}{M \ C} \cdot wfc \cdot 10^3
+\label{eq:noxrate}
+\end{equation}
+
+We use Python to perform these calculations on widows of data the contain a peak or a series of peaks. 
+We use the \verb|find_peaks()| function from the \verb|scipy| library along with some post processing to identify peaks with start and end times.
+We then generate a baseline that represents the abient levels of the polluntant using asymmetric least squares baseline algorithm.
+Then we find the area between the peak and the baseline during the start and end times of the peak using \verb|scipy.integrate.trapezoid()|.
+This automation process in Python provides a convenient way to compare emission rates from many peaks.
+
+\begin{figure}[htbp]
+	\centering
+    \includegraphics[width=\linewidth]{figures/emission_ex_pt2.png}%
+	\caption{\centering example of data with peaks identified for emission calculation}
+  \Description{description3}
+	\label{fig:emission_ex_pt2}
+\end{figure}
 
 \subsection{Machine Learning}
 
@@ -243,12 +277,156 @@ Electrical connection to the low-cost sensors were passed into the canister thro
 
 \subsection{Lab Testing}
 
-\begin{itemize}
-\item We simulated trucks driving by in a lab setting
-\item The spikes look pretty good, but low-cost sensor emission rates 
-\item Using machine learning improves the low-cost sensor data very well
-\item Improves emission rates a bit but not amazing
-\end{itemize}
+We performed a series of tests in the engine lab to simulate trucks driving past our system.
+We alternated the intake between ambient room air and engine exhaust to create repeated passing events.
+We tested different traffic scenarios by varying both the duration of exposure to exhaust and the time between exposures.
+For each test, we did five exposures in a row. 
+The high-cost sensors exhibit clear peaks, with steep rises and falls.
+In contrast, the low-cost sensors respond more slowly, and often do not have time to fall back to baseline level before the next peak begins---even with 30-second gaps between exposures.
+During our in-lab traffic simulation tests, we did not have a low-cost NO$_x$ sensor capable of reliably capturing peaks, so we only analyzed PM emission rates from these tests.
+
+Our low-cost PM sensors were the Plantower PMS1003 and the Senserion SPS30, with the Senserion SCD30 and the MHZ-16 as our low-cost CO2 sensors.
+The dekati was used as the high-cost reference sensor for PM and the licor was used as the high-cost reference sensor for CO2.
+Emission rates for all peaks were calculated for each combination of PM with CO2 sensor. 
+In many tests, the low-cost sensors did not have a fast enough response time to capture all of the peaks, so these missed peaks are not counted as valid samples.
+
+\begin{table}[htbp]
+\centering
+\caption{Error summary statistics for sensor combinations.}
+\label{tab:emissionerrorlab}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Combination} & \textbf{\% Mean Error} & \textbf{Valid Samples (n)} \\
+\midrule
+\rowcolor{yellow!30} dekati/licor        & 0.000  & 178 \\
+plantower/licor     & 61.672    & 148 \\
+sps30/licor         & 120.690   & 155 \\
+dekati/scd30        & 82.005    & 152 \\
+plantower/scd30     & 72.789    & 134 \\
+sps30/scd30         & 256.021   & 137 \\
+dekati/mhz16        & 5082.535  & 129 \\
+plantower/mhz16     & 2008.566  & 120 \\
+sps30/mhz16         & 7727.740  & 125 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Overall, the low-cost sensors performed poorly in reproducing the emission rates of the high-cost sensors.
+Across all sensor combinations, the lowest mean error was Plantower/Licor at 61.7\%.
+This is a low-cost PM sensor with the high-cost CO2 sensor.
+The best combination of only low-cost sensors was Plantower/SCD30 at 72.7\% error.
+This indicates that the differences in peak magnitude and shape make it difficult for low-cost sensors to match high-cost sensors.
+
+We trained our LSTM model on the engine lab testing data and reserved 5 experiments for as testing data. 
+It significantly improves how well the low-cost sensor data coorolates to the high-cost sensor data. 
+
+\begin{table}[h!]
+\centering
+\caption{Errors of ML prediction for LiCor CO$_2$ compared to low-cost CO$_2$ sensors on testing set of data (5 tests)}
+\label{tab:lstmerrorco2}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & 
+\textbf{SCD30} & 
+\textbf{MH-Z16} & 
+\textbf{ML Prediction} \\
+\midrule
+RMSE  &    528.82970 &    570.61397 &   156.85185 \\
+MAE   &    407.68045 &    365.82852 &    77.49657 \\
+R$^2$ &      0.00956 &     -0.15314 &     0.91287 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Errors of ML prediction for Dekati PM compared to low-cost PM sensors on testing set of data (5 tests)}
+\label{tab:lstmerrorpm}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & 
+\textbf{Plantower} & 
+\textbf{SPS30} & 
+\textbf{ML Prediction} \\
+\midrule
+RMSE  &   121.26701 &    72.65848 &   29.28756 \\
+MAE   &    57.79027 &    52.01417 &   14.05432 \\
+R$^2$ &    -0.16500 &     0.58177 &    0.93205 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The performance of each sensor combination for calculating emission rates on these 5 testing experiemnts is seen in table \ref{tab:emissionerrorlab_ml}. 
+
+\begin{table}[h!]
+\centering
+\caption{Error summary statistics for sensor combinations.}
+\label{tab:emissionerrorlab_ml}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Combination} & 
+\textbf{Mean Error} & 
+\textbf{n Valid} \\
+\midrule
+dekati/licor        &    0.000  & 178 \\
+plantower/licor     &   61.672  & 148 \\
+sps30/licor         &  120.690  & 155 \\
+dekati/scd30        &   82.005  & 152 \\
+plantower/scd30     &   72.789  & 134 \\
+sps30/scd30         &  256.021  & 137 \\
+dekati/mhz16        & 5082.535  & 129 \\
+plantower/mhz16     & 2008.566  & 120 \\
+sps30/mhz16         & 7727.740  & 125 \\
+\rowcolor{gray!10} dekati/co2pred      &    6.955  & 177 \\
+\rowcolor{gray!10} plantower/co2pred   &   61.560  & 148 \\
+\rowcolor{gray!10} sps30/co2pred       &  123.693  & 155 \\
+\rowcolor{gray!10} pmpred/licor        &   11.094  & 176 \\
+\rowcolor{gray!10} pmpred/mhz16        & 5321.615  & 129 \\
+\rowcolor{gray!10} pmpred/scd30        &   88.480  & 152 \\
+\rowcolor{gray!30} pmpred/co2pred      &   12.957  & 176 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We can see that the LSTM significatly improved the error percentage of the emission rate estimates.
+Rates predicted by a combination of the ML enhanced PM data and the ML enhanced CO2 data only had an error of 13\%, compared to 72\% for the best combination of only low-cost sensors.
+However, even if low-cost sensors cannot match absolute emission rates, they may still be able to identify good vs bad trucks relative to each other.
+To evaluate this, we compared whether the highest emission rates measured by the low-cost sensors happened on the same peaks as the highest emission rates on the high-cost sensors
+The results in table \ref{tab:percentmatchlab_ml} are also only calculated on the test set of experiments to make it a fair comparison for the ML predictions.
+
+\renewcommand\theadfont{\small}
+\begin{table}[h!]
+\centering
+\caption{Percentage of top peaks that match with Dekati/LI-COR for each sensor combination in Lab, including machine learning predictions}
+\label{tab:percentmatchlab_ml}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Combination} &
+\thead{\% Matched in \\ top 10\% (n=18)} &
+\thead{\% Matched in \\ top 20\% (n=36)} &
+\thead{\% Matched in \\ top 30\% (n=54)} \\
+\midrule
+dekati/licor        & 100.0 & 100.0 & 100.0 \\
+plantower/licor     &   0.0 &   2.8 &  11.1 \\
+sps30/licor         &   0.0 &   0.0 &   7.4 \\
+dekati/scd30        &  16.7 &  30.6 &  50.0 \\
+plantower/scd30     &   0.0 &   2.8 &  13.0 \\
+sps30/scd30         &   0.0 &   0.0 &   9.3 \\
+dekati/mhz16        &  27.8 &  75.0 &  66.7 \\
+plantower/mhz16     &   0.0 &   8.3 &  29.6 \\
+sps30/mhz16         &   0.0 &   2.8 &  20.4 \\
+\rowcolor{gray!10} dekati/co2pred      &  72.2 &  97.2 &  88.9 \\
+\rowcolor{gray!10} plantower/co2pred   &   0.0 &   2.8 &  11.1 \\
+\rowcolor{gray!10} sps30/co2pred       &   0.0 &   0.0 &   7.4 \\
+\rowcolor{gray!10} pmpred/licor        &  72.2 &  72.2 &  70.4 \\
+\rowcolor{gray!10} pmpred/scd30        &  16.7 &  25.0 &  38.9 \\
+\rowcolor{gray!10} pmpred/mhz16        &  27.8 &  69.4 &  63.0 \\
+\rowcolor{gray!30} pmpred/co2pred      &  55.6 &  77.8 &  72.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Once again the ML enhanced predictions were much better than 
 
 \subsection{Deployment}
 

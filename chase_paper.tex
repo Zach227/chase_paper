@@ -31,8 +31,6 @@
 \usepackage{makecell}
 \usepackage{multirow}
 
-
-
 %%
 %% Submission ID.
 %% Use this when submitting an article to a sponsored event. You'll
@@ -65,19 +63,19 @@
 }
 \email{zadriskill@gmail.com}
 
-\author{Lars Th{\o}rv{\"a}ld}
-\affiliation{%
-  \institution{The Th{\o}rv{\"a}ld Group}
-  \city{Hekla}
-  \country{Iceland}}
-\email{larst@affiliation.org}
+% \author{Lars Th{\o}rv{\"a}ld}
+% \affiliation{%
+%   \institution{The Th{\o}rv{\"a}ld Group}
+%   \city{Hekla}
+%   \country{Iceland}}
+% \email{larst@affiliation.org}
 
-\author{Valerie B\'eranger}
-\affiliation{%
-  \institution{Inria Paris-Rocquencourt}
-  \city{Rocquencourt}
-  \country{France}
-}
+% \author{Valerie B\'eranger}
+% \affiliation{%
+%   \institution{Inria Paris-Rocquencourt}
+%   \city{Rocquencourt}
+%   \country{France}
+% }
 
 \author{Philip Lundrigan}
 \affiliation{%
@@ -144,9 +142,9 @@ Sed ipsa numquam eos galisum laborum eum explicabo fuga rem molestiae aliquid eu
 %% the work being presented. Separate the keywords with commas.
 % \keywords{yes, no, maybe}
 
-\received{20 February 2007}
-\received[revised]{12 March 2009}
-\received[accepted]{5 June 2009}
+\received{26 January 2026}
+% \received[revised]{12 March 2009}
+% \received[accepted]{5 June 2009}
 
 %%
 %% This command processes the author and affiliation and title
@@ -253,7 +251,6 @@ In the field, we had one inlet above the road to sample trucks with high exhaust
 The low-cost sensors were housed in a metal canister with inlets and outlets allowing them to receive a controlled sample of exaust similar to the high-cost sensors.
 Electrical connections to the low-cost sensors were passed into the canister through an airtight bulkhead connector.
 
-
 \subsection{Emission Rates}
 
 Once we collected data from trucks, the standard used to compare low-cost sensors to high-cost sensors is emission rates. 
@@ -299,7 +296,6 @@ We consider the use of Long Short-Term Moemory (LSTM) networks which operate on 
 
 TODO: Backround info on how LSTM works.
 
-
 LSTMs have been applied to low-cost air-quality sensor data in several studies.
 In some cases, the LSTMs were used to forecast future pollutant levels~\cite{belavadi_air_2020, mani_comparative_2021}.
 These studies achieved good results and demonstrate the ability of LSTMs to learn temporal patterns in a sequence of low-cost sensor data.
@@ -316,29 +312,46 @@ In this work, we extend prior research on low-cost sensor calibration by focusin
 We use an LSTM model to process short windows of data, at a 2s sample rate, containing spikes in pollutant levels caused by a diesel exhaust plume.
 We evaluate whether ML-calibrated data leads to accurate emission-rate estimates for identifying high-emitting trucks.
 
+\subsection {Dataset}
+
+In the laboratory, we performed a series of tests to simulate trucks driving past our system.
+We alternated the intake between ambient room air and engine exhaust to create repeated passing events, performing five consecutive exposures for each test.
+An example of one such traffic simulation test is seen in Figure \ref{fig:emission_ex}.
+We tested different traffic scenarios by varying both the duration of exposure to exhaust and the time between exposures.
+
+We trained an LSTM on this set laboratory data.
+Of the 36 traffic simulation tests, we reserved five to act as testing data, and trained on the remaining tests.
+When we had muliple low-cost sensors for the same pollutant, we used both sequences as inputs to the model and trained to predict the high-cost sensor data.
+During our in-lab traffic simulation tests, we did not have a low-cost NO$_x$ sensor capable of reliably capturing peaks, so we only analyzed PM emission rates from these tests.
+An example of PM data from a laboratory test is shown in Figure \ref{fig:lstmexamplepm}.
+
 \begin{figure}[htbp]
 	\centering
     \includegraphics[width=\linewidth]{figures/lstmexamplepm.png}%
 	\caption{\centering LSTM Model PM inputs and outputs for example test.}
+  \Description{description4}
 	\label{fig:lstmexamplepm}
 \end{figure}
+
+To collect real-world data, we deployed our system on the roadside for three days at Perry Port of Entry in Utah.
+After deployment, we sifted through this data to find clear peaks that cooresponded to a passing truck, and grabbed a 60-second window around each peak for analysis.
+Overall, the data from the field deployment was lower quality than the lab data, with many trucks not producing distinguishable peaks.
+The most reliable sensors with the most peaks were the NOx sensors, so we focused our analysis on NOx emission rates from the field deployment, with the high-cost CO$_2$ sensor used to calculate dilution.
+We identifed 104 valid peaks from the three days of data, and trained the LSTM model on 81 of these peaks, reserving 23 for testing.
+While each test in laboratory data contained five consecutive peaks, the field data usually contained only one peak per window.
 
 \section{Results}
 
 \subsection{Lab Testing}
 
-We performed a series of tests in our engine laboratory to simulate trucks driving past our system.
-We alternated the intake between ambient room air and engine exhaust to create repeated passing events, performing five concecutive exposures for each test.
-An example of one such traffic simulation test is seen in Figure \ref{fig:emission_ex}.
-We tested different traffic scenarios by varying both the duration of exposure to exhaust and the time between exposures.
 The high-cost sensors exhibited clear peaks, with steep rises and falls.
 In contrast, the low-cost sensors responded more slowly, and often did not have time to fall back to baseline levels before the next peak began---even with 30-second gaps between exposures.
-During our in-lab traffic simulation tests, we did not have a low-cost NO$_x$ sensor capable of reliably capturing peaks, so we only analyzed PM emission rates from these tests.
-
-Our low-cost PM sensors were the Plantower PMS1003 and the Senserion SPS30, with the Senserion SCD30 and the MHZ-16 as our low-cost CO$_2$ sensors.
+Our low-cost PM sensors were the Plantower PMS1003 and the Senserion SPS30, with the Senserion SCD30 and the MH-Z16 as our low-cost CO$_2$ sensors.
 The dekati was used as the high-cost reference sensor for PM and the licor was used as the high-cost reference sensor for CO$_2$.
-Emission rates for all peaks were calculated for each combination of PM with CO sensor. 
+Emission rates for all peaks were calculated for each combination of PM with CO$_2$ sensor.
 In many tests, the low-cost sensors did not have a fast enough response time to capture all of the peaks, so these missed peaks are not counted as valid samples.
+Once all emission rates were calculated, we compared how similar the resulting emission rates were between combinations that used a low-cost sensor, and the high-cost with high-cost combination (Dekati/LiCor).
+These mean errors of emission rates compared to the the gold standard combination are shown in table \ref{tab:emissionerrorlab}.
 
 \begin{table}[htbp]
 \centering
@@ -348,15 +361,15 @@ In many tests, the low-cost sensors did not have a fast enough response time to 
 \toprule
 \textbf{Combination} & \textbf{\% Mean Error} & \textbf{Valid Samples (n)} \\
 \midrule
-\rowcolor{yellow!30} dekati/licor        & 0.000  & 178 \\
-plantower/licor     & 61.672    & 148 \\
-sps30/licor         & 120.690   & 155 \\
-dekati/scd30        & 82.005    & 152 \\
-plantower/scd30     & 72.789    & 134 \\
-sps30/scd30         & 256.021   & 137 \\
-dekati/mhz16        & 5082.535  & 129 \\
-plantower/mhz16     & 2008.566  & 120 \\
-sps30/mhz16         & 7727.740  & 125 \\
+\rowcolor{yellow!30} Dekati/Licor        & 0.000  & 178 \\
+PMS1003/Licor     & 61.672    & 148 \\
+SPS30/Licor       & 120.690   & 155 \\
+Dekati/SCD30      & 82.005    & 152 \\
+PMS1003/SCD30     & 72.789    & 134 \\
+SPS30/SCD30       & 256.021   & 137 \\
+Dekati/MH-Z16     & 5082.535  & 129 \\
+PMS1003/MH-Z16    & 2008.566  & 120 \\
+SPS30/MH-Z16      & 7727.740  & 125 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -367,12 +380,12 @@ This is a low-cost PM sensor with the high-cost CO$_2$ sensor.
 The best combination of only low-cost sensors was Plantower/SCD30 at 72.7\% error.
 This indicates that the differences in peak magnitude and shape make it difficult for low-cost sensors to match high-cost sensors.
 
-We trained our LSTM model on the engine lab testing data and reserved 5 experiments for as testing data. 
-It significantly improves how well the low-cost sensor data coorolates to the high-cost sensor data. 
+However, if we use the LSTM model to enhance the low-cost sensor data, we can significantly improve the accuracy of emission rate estimates.
+The coorelation of raw low-cost sensor data to high-cost sensor data is calculated in Tables \ref{tab:lstmerrorco2} and \ref{tab:lstmerrorpm}, along with the coorelation of LSTM enhanced data based purely off of the two low-cost sensors inputs.
 
 \begin{table}[h!]
 \centering
-\caption{Errors of ML prediction for LiCor CO$_2$ compared to low-cost CO$_2$ sensors on testing set of data (5 tests)}
+\caption{Metrics of how well low-cost CO$_2$ sensors and ML prediction compare to LiCor CO$_2$ on testing set of data (5 tests)}
 \label{tab:lstmerrorco2}
 \begin{tabular}{lrrr}
 \toprule
@@ -390,7 +403,7 @@ R$^2$ &      0.00956 &     -0.15314 &     0.91287 \\
 
 \begin{table}[h!]
 \centering
-\caption{Errors of ML prediction for Dekati PM compared to low-cost PM sensors on testing set of data (5 tests)}
+\caption{Metrics of how well low-cost PM sensors and ML prediction compare to Dekati PM on testing set of data (5 tests)}
 \label{tab:lstmerrorpm}
 \begin{tabular}{lrrr}
 \toprule
@@ -406,7 +419,10 @@ R$^2$ &    -0.16500 &     0.58177 &    0.93205 \\
 \end{tabular}
 \end{table}
 
-The performance of each sensor combination for calculating emission rates on these 5 testing experiemnts is seen in table \ref{tab:emissionerrorlab_ml}. 
+This shows that the LSTM leads a clear improvement over the low-cost sensors alone, especially when using $R^2$ as the metric.
+This improved data also leads to better emission rate estimates.
+In order to make a fair comparison, we only compared the emisison rates calculated form the 5 tests that were reserved for testing the LSTM model.
+These results are summarized in table \ref{tab:emissionerrorlab_ml}. 
 
 \begin{table}[h!]
 \centering
@@ -418,35 +434,31 @@ The performance of each sensor combination for calculating emission rates on the
 \textbf{Mean Error} & 
 \textbf{n Valid} \\
 \midrule
-dekati/licor        & 0.000    & 25 \\
-plantower/licor     & 62.711   & 21 \\
-sps30/licor         & 58.506   & 21 \\
-dekati/scd30        & 88.540   & 20 \\
-plantower/scd30     & 48.380   & 19 \\
-sps30/scd30         & 170.797  & 19 \\
-dekati/mhz16        & 6006.096 & 18 \\
-plantower/mhz16     & 2092.081 & 17 \\
-sps30/mhz16         & 8079.576 & 17 \\
-\rowcolor{gray!10} dekati/co2pred    & 11.150   & 24 \\
-\rowcolor{gray!10} plantower/co2pred & 60.519   & 21 \\
-\rowcolor{gray!10} sps30/co2pred     & 63.009   & 21 \\
-\rowcolor{gray!10} pmpred/licor      & 19.219   & 23 \\
-\rowcolor{gray!10} pmpred/scd30      & 107.150  & 20 \\
-\rowcolor{gray!10} pmpred/mhz16      & 6688.295 & 18 \\
-\rowcolor{gray!30} pmpred/co2pred    & 18.183   & 23 \\
+\rowcolor{yellow!30} Dekati/Licor        & 0.000    & 25 \\
+PMS1003/Licor     & 62.711   & 21 \\
+SPS30/Licor         & 58.506   & 21 \\
+Dekati/SCD30        & 88.540   & 20 \\
+PMS1003/SCD30     & 48.380   & 19 \\
+SPS30/SCD30         & 170.797  & 19 \\
+Dekati/MH-Z16        & 6006.096 & 18 \\
+PMS1003/MH-Z16     & 2092.081 & 17 \\
+SPS30/MH-Z16         & 8079.576 & 17 \\
+\rowcolor{gray!10} Dekati/CO$_2$-Pred    & 11.150   & 24 \\
+\rowcolor{gray!10} PMS1003/CO$_2$-Pred & 60.519   & 21 \\
+\rowcolor{gray!10} SPS30/CO$_2$-Pred     & 63.009   & 21 \\
+\rowcolor{gray!10} PM-Pred/Licor      & 19.219   & 23 \\
+\rowcolor{gray!10} PM-Pred/SCD30      & 107.150  & 20 \\
+\rowcolor{gray!10} PM-Pred/MH-Z16      & 6688.295 & 18 \\
+\rowcolor{gray!30} PM-Pred/CO$_2$-Pred    & 18.183   & 23 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-
-
-
-
-We can see that the LSTM significatly improved the error percentage of the emission rate estimates.
-Rates predicted by a combination of the ML enhanced PM data and the ML enhanced CO$_2$ data only had an error of 13\%, compared to 72\% for the best combination of only low-cost sensors.
-However, even if low-cost sensors cannot match absolute emission rates, they may still be able to identify good vs bad trucks relative to each other.
-To evaluate this, we compared whether the highest emission rates measured by the low-cost sensors happened on the same peaks as the highest emission rates on the high-cost sensors
-The results in table \ref{tab:percentmatchlab_ml} are also only calculated on the test set of experiments to make it a fair comparison for the ML predictions.
+We can see that the LSTM improved the error percentage of the emission rate estimates.
+Although the error of the best low-cost sensor combination (48\%) was lower on this smaller dataset, the rates predicted by a combination of the LSTM enhanced PM data and the LSTM enhanced CO$_2$ data still improved to a mean error 18\%.
+While this improvement on raw emission rates is promising, the motivating question of our work is whether low-cost sensors could identify high-emitting trucks.
+To evaluate this, we compared whether the highest emission rates measured by the low-cost sensors happened on the same peaks as the highest emission rates measured by the high-cost sensors
+The results in table \ref{tab:percentmatchlab_ml} are also only calculated on the test set of five laboratory experiments to make it a fair comparison for the ML predictions.
 
 \renewcommand\theadfont{\small}
 \begin{table}[h!]
@@ -460,54 +472,137 @@ The results in table \ref{tab:percentmatchlab_ml} are also only calculated on th
 \thead{\% Matched in \\ top 20\% (n=5)} &
 \thead{\% Matched in \\ top 30\% (n=8)} \\
 \midrule
-dekati/licor      &  100.0  &  100.0  & 100.0 \\
-plantower/licor   &    0.0  &    0.0  &   0.0 \\
-sps30/licor       &    0.0  &    0.0  &   0.0 \\
-dekati/scd30      &   33.3  &   20.0  &  62.5 \\
-plantower/scd30   &    0.0  &    0.0  &  12.5 \\
-sps30/scd30       &    0.0  &    0.0  &  12.5 \\
-dekati/mhz16      &   66.7  &   80.0  &  62.5 \\
-plantower/mhz16   &    0.0  &    0.0  &  25.0 \\
-sps30/mhz16       &    0.0  &    0.0  &  25.0 \\
-\rowcolor{gray!10} dekati/co2pred    &   66.7  &  100.0  &  75.0 \\
-\rowcolor{gray!10} plantower/co2pred &    0.0  &    0.0  &   0.0 \\
-\rowcolor{gray!10} sps30/co2pred     &    0.0  &    0.0  &   0.0 \\
-\rowcolor{gray!10} pmpred/licor      &    0.0  &   60.0  &  62.5 \\
-\rowcolor{gray!10} pmpred/scd30      &   33.3  &   20.0  &  50.0 \\
-\rowcolor{gray!10} pmpred/mhz16      &   33.3  &   60.0  &  62.5 \\
-\rowcolor{gray!30} pmpred/co2pred    &   33.3  &   80.0  &  75.0 \\
+\rowcolor{yellow!30} Dekati/Licor      &  100.0  &  100.0  & 100.0 \\
+PMS1003/Licor   &    0.0  &    0.0  &   0.0 \\
+SPS30/Licor       &    0.0  &    0.0  &   0.0 \\
+Dekati/SCD30      &   33.3  &   20.0  &  62.5 \\
+PMS1003/SCD30   &    0.0  &    0.0  &  12.5 \\
+SPS30/SCD30       &    0.0  &    0.0  &  12.5 \\
+Dekati/MH-Z16      &   66.7  &   80.0  &  62.5 \\
+PMS1003/MH-Z16   &    0.0  &    0.0  &  25.0 \\
+SPS30/MH-Z16       &    0.0  &    0.0  &  25.0 \\
+\rowcolor{gray!10} Dekati/CO$_2$-Pred    &   66.7  &  100.0  &  75.0 \\
+\rowcolor{gray!10} PMS1003/CO$_2$-Pred &    0.0  &    0.0  &   0.0 \\
+\rowcolor{gray!10} SPS30/CO$_2$-Pred     &    0.0  &    0.0  &   0.0 \\
+\rowcolor{gray!10} PM-Pred/Licor      &    0.0  &   60.0  &  62.5 \\
+\rowcolor{gray!10} PM-Pred/SCD30      &   33.3  &   20.0  &  50.0 \\
+\rowcolor{gray!10} PM-Pred/MH-Z16      &   33.3  &   60.0  &  62.5 \\
+\rowcolor{gray!30} PM-Pred/CO$_2$-Pred    &   33.3  &   80.0  &  75.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-
-
-
-Once again the ML enhanced predictions were much better than 
+These results also show significant improvement when using the LSTM enhanced data.
+The combination of LSTM enhanced PM and CO$_2$ data identified a greater percent of high-emitters than any combination of two low-cost sensors.
+However, only 33\% match in the top 10\% is not very high, but is also a byproduct of the small sample size for that group.
+Although machine learning significaly improved the emission rate estimates and high-emitter identification of low-cost sensors, the mean error and top X-percent matchin metrics are not what would be desired for widespread use.
 
 \subsection{Deployment}
 
-\begin{itemize}
-\item We brought low- and high-cost sensors to a real world deployment for 3 days
-\item Data was much worse in the real world
-\item Machine learning helped a bit, but not as much as in the lab
-\end{itemize}
+As mentioned before, the sensors performed much worse in the field, with the most viable data coming from the high-cost CO$_2$ sensor and the NO$_x$ sensors.
+The reduced performance of our sensors is most likely due to the challenge of capturing a strong sample of exhaust from a passing vehicle.
+The absolute emission rates calculated by the Alphasense differed substantially from those measured by the high-cost Ecophysics instrument (Table \ref{tab:emissionerrornox}), with a mean error of 720\%.
+This large difference is despite the fact that both sensors used the same high-cost CO$_2$ sensor for dilution calculation.
 
+\begin{table}[htbp]
+\centering
+\caption{Error summary statistics for sensor combinations.}
+\label{tab:emissionerrornox}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Combination} & \textbf{\% Mean Error} & \textbf{Valid Samples (n)} \\
+\midrule
+ecophysics/licor     & 0.000    & 104 \\
+alphasense/licor     & 720.951  & 104 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The results of how well LSTM enhance data compares to the high-cost Ecophysics data is summarized in Table \ref{tab:lstmerrornox}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Metric} & 
+\textbf{NO-B4} & 
+\textbf{ML Prediction} \\
+\midrule
+RMSE  &    124.80991 &   79.52613 \\
+MAE   &    92.10749  &   44.52589 \\
+R$^2$ &    -0.03560  &   0.57955 \\
+\bottomrule
+\end{tabular}
+\caption{Metrics of how well low-cost NO$_x$ sensor and ML prediction compare to Ecophysics NO$_x$ on testing set of data (5 tests)}
+\label{tab:lstmerrornox}
+\end{table}
+
+While the LSTM did improve correlation significantly, it was not able to match the high-cost data as well as the ML models for the lab data.
+The LSTM well matching low-cost data when peaks were large, but most of the peaks in the field deployment were small and close to the noise level of the low-cost sensor.
+The performance of this LSTM enhance data on emission rates for the testing dataset is summarized in Tables \ref{tab:emissionerrorperryml} and \ref{tab:percentmatchnoxml}.
+
+\begin{table}[htbp]
+\centering
+\caption{Error summary statistics for sensor combinations.}
+\label{tab:emissionerrorperryml}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Combination} & \textbf{\% Mean Error} & \textbf{Valid Samples (n)} \\
+\midrule
+ecophysics/Licor     & 0.000    & 23 \\
+alphasense/Licor     & 225.460  & 23 \\
+NO$_x$-Pred/Licor     & 115.338  & 23 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\renewcommand\theadfont{\small}
+\begin{table}[h!]
+\centering
+\caption{Percentage of top peaks that match with Dekati/LI-COR for each sensor combination in Lab, including machine learning predictions}
+\label{tab:percentmatchnoxml}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Combination} &
+\thead{\% Matched in \\ top 10\% (n=3)} &
+\thead{\% Matched in \\ top 20\% (n=5)} &
+\thead{\% Matched in \\ top 30\% (n=7)} \\
+\midrule
+\rowcolor{yellow!30} Ecophysics/Licor    &  100.0  &  100.0  & 100.0 \\
+                      Alphasense/Licor   &   66.7  &   60.0  &  85.7 \\
+\rowcolor{gray!10} NO$_x$-Pred/Licor     &   33.3  &   60.0  &  85.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Interestingly, while the LSTM improved the mean error of emission rates from 225\% to 115\%, it did not improve the ability to identify high-emitting trucks.
+The shows the the Alphasense NO-B4 sensor has a strong ability to comparatively identify high-emitting trucks when paired with a high-cost CO$_2$ sensor.
+Another reason for the improved performance in top X-percent matching from the low-cost sensor alond could be that there is more true variability in emission rates encountered in the field compared to the lab, where every peak came from the same engine.
 
 \section{Conclusion}
 
-\begin{itemize}
-  \item Overall, we built a cool systems
-  \item The low-cost sensors show promise, but depend and getting a good sample, and are inconsistent
-  \item Machine Learning shows potential, but needs better data and further analysis and transferability
-\end{itemize}
+Heavy-duty on-road vehicles remain a significant source of harmful pollutants, including NO$_x$, and Particulate Matter.
+One strategy for characterizing real-world emissions is roadside emission monitoring, which provides an in-use external evaluation of passing vehicles.
+We investigated the use of low-cost sensors for roadside emissions monitoring, by comparing them to high-cost reference instruments in both laboratory and real-world settings.
 
+We developed a reliabled low-cost data acquisition system for collecting, storing, and visualizing data from multiple low- and high-cost sensors.
+With the data we collected, we calculated emission rates for peaks in the data and compared the performance of low-cost sensors to high-cost sensors.
+We found that using an LSTM network, we could significantly improve the correlation of low-cost sensor data to high-cost sensor data for short term windoes of data samplede every 2 seconds.
+The ability of LSTMs to learn temporal patterns helped correct for the slow response time of low-cost sensors.
+
+This improved data led to better emission rate estimates from low-cost PM and CO2 sensors in laboratory testing, reducing the mean error from over 60\% to under 20\%.
+The LSTM enhanced data also improved the ability of low-cost sensors to correctly identify the top 10-30\% of peaks with the highest PM emission rates in the laboratory.
+In the field deployment, the LSTM also improved the mean error of NO emission rates from the low-cost sensor, but did not improve the ability to identify high-emitting trucks compared to the raw low-cost sensor data.
+
+Overall, our results show that low-cost sensors have potential for roadside emissions monitoring, especially when combined with machine learning techniques to enhance data quality.
+Low-cost sensors and machine learning models perform best when there is a strong signal to capture, which can be challenging in real-world roadside deployments.
+Further work is needed to improve the reliability of low-cost sensors in field deployments, and to explore the transferability of machine learning models across different settings and sensor units.
 
 %%
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{sample-base}
+\bibliography{references}
 
 
 \end{document}

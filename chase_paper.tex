@@ -155,13 +155,13 @@ Sed ipsa numquam eos galisum laborum eum explicabo fuga rem molestiae aliquid eu
 
 Transportation is essential to modern society, with the movement of people and goods driving economic and social activity.
 In 2019, it was estimated that more than 70\% of US freight was transported by the trucking industry~\cite{bishop_utah_2022}.
-Diesel engines are a major source of harmful pollutants including Particulate Matter (PM) and Nitrogen Oxides (NOx), which are harmful to human health and the environment.
+Diesel engines are a major source of harmful pollutants, including Particulate Matter (PM) and Nitrogen Oxides (NOx), which are harmful to human health and the environment.
 For example, short-term exposure to diesel motor emissions can cause acute irritation and asthma-like symptoms, while long-term exposure is linked to increased mortality and lung cancer~\cite{wichmann_diesel_2007}.
 Other studies have linked traffic-related air pollution to increased risk of neurological conditions, including depression, anxiety, and dementia~\cite{miner_car_2024}.
-On-road vehicle emissions also damage our natural environment, contributing to global climate change~\cite{nat_geo_2025, anenberg_global_2019}
+On-road vehicle emissions also damage our natural environment, contributing to global climate change~\cite{nat_geo_2025, anenberg_global_2019}.
 
 Reducing on-road diesel emissions is therefore an important public health and environmental goal.
-Researchers have noted the large impact that targeting high-emitting vehicles can have on reducing overall emissions, noting that a small fraction of vehicles is responsible for a disproportionate amount of pollution.~\cite{CARB_2015, ban-weiss_measurement_2009, shen_evaluation_2022}
+Researchers have noted the large impact that targeting high-emitting vehicles can have on reducing overall emissions, noting that a small fraction of vehicles is responsible for a disproportionate amount of pollution~\cite{CARB_2015, ban-weiss_measurement_2009, shen_evaluation_2022}.
 Conventional strategies to reduce on-road pollution from diesel trucks include aftertreatment systems, onboard sensors, and government regulatory Inspection and Maintenance (I/M) programs.
 Aftertreatment systems significantly reduce NOx and PM emissions from new diesel vehicles, but most high-emitting vehicles are likely older or broken trucks with ineffective aftertreatment.
 I/M programs are designed to identify high-emitting vehicles through annual inspections, but researchers have questioned the effectiveness of such programs, showing that areas with I/M programs do not have a statistically significant decrease in emissions compared to areas without I/M programs~\cite{maricq_extreme_2025, bishop_inspection_2020}.
@@ -170,31 +170,36 @@ Roadside emissions monitoring systems provide an alternative approach to identif
 \subsection{Low-Cost Roadside Emissions Monitoring}
 
 While roadside emissions monitoring has been the focus of many research teams for estimating pollution from on-road vehicles~\cite{burgard_spectroscopy_2006, watne_fresh_2018, liu_roadside_2019, sugrue_comparing_2020, shen_evaluation_2022}, it has not yet been adopted for large-scale detection of high emitters.
-The main challenges are the high cost and complexity of such systems, with expensive sensing instruments that are often tens of thousands of dollars, and the need for onsite personel for operation and maintenance, and calibration.
-In this paper, we explore the use of low-cost sensors for roadside emissions monitoring, which could lead to a cost-effective widely deployable roadside emission monitorying system.
+The main challenges are the high cost and complexity of such systems, including expensive sensing instruments that can cost tens of thousands of dollars, and the need for on-site personnel for operation, maintenance, and calibration.
+In this paper, we explore the use of low-cost sensors for roadside emissions monitoring, which could lead to a cost-effective, widely deployable emissions monitoring system.
 
 Many studies have evaluated the quality of low-cost air quality sensors by comparing them to high-cost reference instruments. 
-Although low-cost sensors often follow a similar trend to high-costs sensors, they have been found to be less accurate, with significant measurement error and variability from sensor to sensor.~\cite{lewis_evaluating_2016,vogt_assessment_2021, jayaratne_influence_2018}
-High-cost sensors usually draw air into an internal chamber for analysis, while low-cost sensors perform analysis on ambient air and are effected by variable environmental conditions such as temperature, pressure, and air flow rate.
-Additionally, many lab-grade gas analyzers have sampling rates of up to 10 Hz, while most low-cost sensors can only be sampled at approximately 1 Hz or less.
-Low-cost sensors are designed and most often used for \textit{ambient sensing}, where the primary concern is measurement levels over the course of minutes, hours, or days.
+Although low-cost sensors often follow a similar trend to high-cost sensors, they have been found to be less accurate, with significant measurement error and variability from sensor to sensor~\cite{lewis_evaluating_2016,vogt_assessment_2021, jayaratne_influence_2018}.
+High-cost sensors usually draw air into an internal chamber for analysis, while low-cost sensors perform analysis on ambient air and are affected by variable environmental conditions, such as temperature, pressure, and airflow rate.
+Additionally, many lab-grade gas analyzers have sampling rates of up to 10 Hz, whereas most low-cost sensors can be sampled at only approximately 1 Hz.
+Low-cost sensors are designed and most often used for \textit{ambient sensing}, where the primary concern is measuring levels over minutes, hours, or days.
 
-Despite these limitations, low-cost sensors still might the potential to identify high-emitting vehicles, even if the absolute measurments are not exact.
-TODO: Mention Sugrue et al and shen et al and what they found about low-cost sensors for roadside emissions monitoring.
+Despite these limitations, low-cost sensors may still be able to identify high-emitting vehicles, even if the absolute measurements are not exact.
+Sugrue et al. first explored emission rate accuracy with lower-cost sensors, comparing a variety of CO$_2$ and Black Carbon (BC) sensors.
+While all of their low-cost sensors were still thousands of dollars, except for one, our low-cost sensors are all less than 200 dollars.
+They found that combinations of lower-cost CO$_2$ and BC sensors could still correctly identify 40-80\% of the highest emitters.
+Shen et al. used truly low-cost CO$_2$ and NO sensors in roadside emission monitoring, and found a correlation between low-cost emission rates and high-emitting trucks.
+However, they relied on a high-cost Condensation Particle Counter to calculate particle number emission rates.
+
 We design and deploy a roadside diesel emissions monitoring system using low- and high-cost sensors, enabling a direct comparison of the two sensor types for estimating vehicle emission rates in a laboratory and real-world setting.
-We also explore the use of machine learning to enhance low-cost sensor data, with the goal of improving the accuracy of emission rate estimates from low-cost sensors.
+We also explore the use of machine learning to enhance low-cost sensor data, aiming to improve the accuracy of emission rate estimates from these sensors.
 
 \section{Methodology}
 
 \subsection{Data Collection}
 
-We implemented a low-cost data acquisition pipeline for reliable data collection, storage, processesing, and visualization (Figure \ref{fig:pipeline}).
-As we evaluated a variety of low-cost sensors, our system collected data from up to 8 low-cost sensors and 4 high-cost sensors simultatneously.
-Table 1 summarizes the sensors we ended up using in this study.
+We implemented a low-cost data acquisition pipeline for reliable data collection, storage, processing, and visualization (Figure \ref{fig:pipeline}).
+As we evaluated a variety of low-cost sensors, our system simultaneously collected data from up to 8 low-cost and 4 high-cost sensors.
+Table 1 summarizes the sensors we used in this study.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=\textwidth]{figures/pipeline_diagram.jpg}
+  \includegraphics[width=0.9\textwidth]{figures/pipeline_diagram.jpg}
   \caption{diagram}
   \Description{description}
   \label{fig:pipeline}
@@ -224,16 +229,16 @@ Table 1 summarizes the sensors we ended up using in this study.
 \end{table}
 
 
-We interfaced with the low-cost sensors using an ESP32 microcontroller that communicated with sensors over I2C and UART protocols.
-The high-cost sensors were read using a Raspberry Pi, communicating with the UART protocol over USB serial connections.
-After the data analyzed in this papers was collected, we upgraded the low-cost data system to also use a Raspberry Pi microcomputer for more reliable data collection and easier interfacing with sensors.
+We interfaced with the low-cost sensors using an ESP32 microcontroller that communicated with them over I2C and UART protocols.
+The high-cost sensors were read using a Raspberry Pi, communicating via the UART protocol over USB serial connections.
+After the data analyzed in this paper was collected, we upgraded the low-cost data system to use a Raspberry Pi microcomputer for more reliable data collection and easier sensor interfacing.
 
-Data was transmitted from these data aquisition devices over the local wifi network in the labratory, and using Starlink internet connection in the field deployment.
-We used the MQTT pup-sub protocol, with Mosquitto MQTT broker running on a local server.
-Python scripts listened to MQTT topics an stored incoming data into our postgreSQL database.
-We used TimescaleDB, a postgreSQL extension for time-series data, to effieciently store our sensor data.
+Data was transmitted from these data acquisition devices over Wi-Fi during laboratory testing and using a Starlink internet connection during the field deployment.
+We used the MQTT pub-sub protocol, with a Mosquitto MQTT broker running on a local server.
+Python scripts listened to MQTT topics and stored incoming data into our PostgreSQL database.
+We used TimescaleDB, a PostgreSQL extension for time-series data, to efficiently store our sensor data.
 We also used Grafana to create dashboards for data visualization, allowing for real-time monitoring during data collection.
-We set up a website on our local server to provide easy access to Grafana and out database.
+We set up a website on our local server to provide easy access to Grafana and our database.
 We also created a page to easily record experiment start and end times in the database and export data in a time-aligned CSV format.
 
 \begin{figure}[htbp]
@@ -244,22 +249,22 @@ We also created a page to easily record experiment start and end times in the da
 	\label{fig:roadside}
 \end{figure}
 
-In laboratory testing, used a diesel engine mounted on a test rig with a dynamometer.
+In laboratory testing, we used a diesel engine mounted on a test rig with a dynamometer.
 We simulated trucks driving past by using a 3-way solenoid valve to switch between sampling exhaust and ambient room air.
 Air was sampled through an inlet near the engine exhaust and drawn through tubing to be distributed to the high and low-cost sensors.
 In the field, we had one inlet above the road to sample trucks with high exhausts, and one inlet in a speedbump to sample trucks with low exhausts (Figure \ref{fig:roadside}). 
-The low-cost sensors were housed in a metal canister with inlets and outlets allowing them to receive a controlled sample of exaust similar to the high-cost sensors.
+The low-cost sensors were housed in a metal canister with inlets and outlets allowing them to receive a controlled sample of exhaust similar to the high-cost sensors.
 Electrical connections to the low-cost sensors were passed into the canister through an airtight bulkhead connector.
 
 \subsection{Emission Rates}
 
-Once we collected data from trucks, the standard used to compare low-cost sensors to high-cost sensors is emission rates. 
-This is more important than directly comparing measured values between low-cost and high-cost sensors, because low-cost sensors still have the potential to identify high-emitting trucks, even if they do to match the high-cost sensors exactly in calibration.
+Once we collected data, the standard for comparing low-cost sensors to high-cost sensors was fuel-based emission rates. 
+This is more important than directly comparing measured values between low-cost and high-cost sensors, because low-cost sensors could still identify high-emitting trucks, even if they do not match the high-cost sensors exactly in calibration.
 It would still provide great value if a low-cost sensor could find trucks that are worse relative to other trucks. 
 
-We calculated the fuel base-emission rate of PM and NOx using a the same method as Sugrue et al. 
-For this method, a peak in the data is identified, and the ratio of the pollutant to CO$_2$ is calculated by the ratio of the area under the curve of the peak.
-This ratio is scaled by constants to acheive the proper units of grams of pollutant per kilogram of fuel burned. 
+We calculated the fuel-based emission rate of PM and NOx using the same method as Sugrue et al. 
+For this method, a peak in the data is identified, and the dilution of the exhaust sample is accounted for by calculating the ratio of pollutant to CO$_2$ from the peak area.
+This ratio is scaled by constants to achieve the proper units of grams of pollutant per kilogram of fuel burned. 
 In equations \ref{eq:pmrate} and \ref{eq:noxrate}, $wfc$ is a constant representing the weight fraction of carbon in diesel fuel (0.87).
 $MC$ is the molar mass of carbon (12 $g/mol$), and MNOx is the molar mass of NO$_2$, which is (46 $g/mol$).
 Multiplying by $10^3$ converts the units to $g/kg$.
@@ -274,11 +279,11 @@ NO_x \ ER = \frac{\int_{t_1}^{t_2} [NO_x(t_1) - NO_x(t_2)] dt}{\int_{t_1}^{t_2} 
 \label{eq:noxrate}
 \end{equation}
 
-We use Python to perform these calculations on widows of data the contain a peak or a series of peaks. 
-We use the \verb|find_peaks()| function from the \verb|scipy| library along with some post processing to identify peaks with start and end times.
-We then generate a baseline that represents the abient levels of the polluntant using asymmetric least squares baseline algorithm.
+We use Python to perform these calculations on windows of data that contain a peak or a series of peaks. 
+We use the \verb|find_peaks()| function from the \verb|scipy| library along with some post-processing to identify peaks with start and end times.
+We then generate a baseline representing the ambient levels of the pollutant using the asymmetric least-squares baseline algorithm.
 Then we find the area between the peak and the baseline during the start and end times of the peak using \verb|scipy.integrate.trapezoid()|.
-This automation process in Python provides a convenient way to compare emission rates in a large dataset.
+This Python automation process provides a convenient way to compare emission rates across a large dataset.
 An output of this process is shown in Figure \ref{fig:emission_ex}.
 
 \begin{figure}[htbp]
@@ -291,20 +296,20 @@ An output of this process is shown in Figure \ref{fig:emission_ex}.
 
 \subsection{Improving Low-cost Sensor Data With LSTM}
 
-Machine learning (ML) approaches have been explored as calibration strategies for low-cost sensors, with models such as gradient boosting, support vector regression, random forest, and neural networks being common in the liturature~\cite{si_evaluation_2020, wang_leveraging_2023, dubey_low-cost_2024}.
-We consider the use of Long Short-Term Moemory (LSTM) networks which operate on a sequence of data, and can learn the temporal behavior of high- and low-cost sensors.
+Machine learning (ML) approaches have been explored as calibration strategies for low-cost sensors, with models such as gradient boosting, support vector regression, random forests, and neural networks being common in the literature~\cite{si_evaluation_2020, wang_leveraging_2023, dubey_low-cost_2024}.
+We consider the use of Long Short-Term Memory (LSTM) networks, which operate on sequences of data and can learn the temporal behavior of high- and low-cost sensors.
 
-TODO: Backround info on how LSTM works.
+TODO: Background info on how LSTM works.
 
 LSTMs have been applied to low-cost air-quality sensor data in several studies.
 In some cases, the LSTMs were used to forecast future pollutant levels~\cite{belavadi_air_2020, mani_comparative_2021}.
 These studies achieved good results and demonstrate the ability of LSTMs to learn temporal patterns in a sequence of low-cost sensor data.
 A few studies used an LSMTS as a calibration method, as other ML models were~\cite{park_assessment_2021, han_calibrations_2021}.
-Both studies found the LSTM to be effective for calibrating low-cost sensors to reference instruments.
+Both studies found that the LSTM was effective at calibrating low-cost sensors against reference instruments.
 One study used an LTSM CNN ensemble model for calibration~\cite{yu_deep_2020}. 
 
 Notably, most existing studies focus on ambient pollution levels over days or months using hourly sampling data.
-One study evaluated calibration methods at sampling intervals of 5, 10, 30, and 60 minutes, finding that data with lower sampling rates led to better calibration performance (Wang).
+One study evaluated calibration methods at sampling intervals of 5, 10, 30, and 60 minutes, finding that lower sampling rates yielded better calibration performance (Wang).
 This highlights the challenges of applying low-cost sensors to short-duration analyses of high-resolution data.
 At higher resolutions, the limitations of low-cost sensors are magnified.
 
@@ -314,14 +319,14 @@ We evaluate whether ML-calibrated data leads to accurate emission-rate estimates
 
 \subsection {Dataset}
 
-In the laboratory, we performed a series of tests to simulate trucks driving past our system.
+In the laboratory, we conducted a series of tests simulating trucks driving past our system.
 We alternated the intake between ambient room air and engine exhaust to create repeated passing events, performing five consecutive exposures for each test.
-An example of one such traffic simulation test is seen in Figure \ref{fig:emission_ex}.
+An example of one such traffic simulation test is shown in Figure \ref{fig:emission_ex}.
 We tested different traffic scenarios by varying both the duration of exposure to exhaust and the time between exposures.
 
-We trained an LSTM on this set laboratory data.
-Of the 36 traffic simulation tests, we reserved five to act as testing data, and trained on the remaining tests.
-When we had muliple low-cost sensors for the same pollutant, we used both sequences as inputs to the model and trained to predict the high-cost sensor data.
+We trained an LSTM on this set of laboratory data.
+Of the 36 traffic simulation tests, we reserved five for testing and trained on the remaining 31.
+When we had multiple low-cost sensors for the same pollutant, we used both sequences as inputs to the model and trained it to predict the high-cost sensor data.
 During our in-lab traffic simulation tests, we did not have a low-cost NO$_x$ sensor capable of reliably capturing peaks, so we only analyzed PM emission rates from these tests.
 An example of PM data from a laboratory test is shown in Figure \ref{fig:lstmexamplepm}.
 
@@ -334,10 +339,10 @@ An example of PM data from a laboratory test is shown in Figure \ref{fig:lstmexa
 \end{figure}
 
 To collect real-world data, we deployed our system on the roadside for three days at Perry Port of Entry in Utah.
-After deployment, we sifted through this data to find clear peaks that cooresponded to a passing truck, and grabbed a 60-second window around each peak for analysis.
-Overall, the data from the field deployment was lower quality than the lab data, with many trucks not producing distinguishable peaks.
+After deployment, we sifted through this data to identify clear peaks corresponding to passing trucks, then grabbed a 60-second window around each peak for analysis.
+Overall, the field-deployed data was of lower quality than the lab data, with most trucks not producing distinguishable peaks.
 The most reliable sensors with the most peaks were the NOx sensors, so we focused our analysis on NOx emission rates from the field deployment, with the high-cost CO$_2$ sensor used to calculate dilution.
-We identifed 104 valid peaks from the three days of data, and trained the LSTM model on 81 of these peaks, reserving 23 for testing.
+We identified 104 valid peaks across the three days of data and trained the LSTM model on 81 of them, reserving 23 for testing.
 While each test in laboratory data contained five consecutive peaks, the field data usually contained only one peak per window.
 
 \section{Results}
@@ -345,13 +350,13 @@ While each test in laboratory data contained five consecutive peaks, the field d
 \subsection{Lab Testing}
 
 The high-cost sensors exhibited clear peaks, with steep rises and falls.
-In contrast, the low-cost sensors responded more slowly, and often did not have time to fall back to baseline levels before the next peak began---even with 30-second gaps between exposures.
-Our low-cost PM sensors were the Plantower PMS1003 and the Senserion SPS30, with the Senserion SCD30 and the MH-Z16 as our low-cost CO$_2$ sensors.
-The dekati was used as the high-cost reference sensor for PM and the licor was used as the high-cost reference sensor for CO$_2$.
+In contrast, the low-cost sensors responded more slowly and often did not have time to return to baseline levels before the next peak began---even with 30-second gaps between exposures.
+Our low-cost PM sensors were the Plantower PMS1003 and the Senserion SPS30, and our low-cost CO$_2$ sensors were the Senserion SCD30 and the MH-Z16.
+The Dekati was used as the high-cost reference sensor for PM, and the Licor was used as the high-cost reference sensor for CO$_2$.
 Emission rates for all peaks were calculated for each combination of PM with CO$_2$ sensor.
-In many tests, the low-cost sensors did not have a fast enough response time to capture all of the peaks, so these missed peaks are not counted as valid samples.
+In many tests, the low-cost sensors did not have fast enough response times to capture all peaks, so these missed peaks are not counted as valid samples.
 Once all emission rates were calculated, we compared how similar the resulting emission rates were between combinations that used a low-cost sensor, and the high-cost with high-cost combination (Dekati/LiCor).
-These mean errors of emission rates compared to the the gold standard combination are shown in table \ref{tab:emissionerrorlab}.
+These mean errors of emission rates compared to the gold standard combination are shown in Table \ref{tab:emissionerrorlab}.
 
 \begin{table}[htbp]
 \centering
@@ -375,13 +380,13 @@ SPS30/MH-Z16      & 7727.740  & 125 \\
 \end{table}
 
 Overall, the low-cost sensors performed poorly in reproducing the emission rates of the high-cost sensors.
-Across all sensor combinations, the lowest mean error was Plantower/Licor at 61.7\%.
+Across all sensor combinations, the lowest mean error was 61.7% with Plantower/Licor.
 This is a low-cost PM sensor with the high-cost CO$_2$ sensor.
-The best combination of only low-cost sensors was Plantower/SCD30 at 72.7\% error.
-This indicates that the differences in peak magnitude and shape make it difficult for low-cost sensors to match high-cost sensors.
+The best combination of low-cost sensors was Plantower/SCD30, with 72.7\% error.
+This indicates that differences in peak magnitude and shape make it difficult for low-cost sensors to match those of high-cost sensors.
 
 However, if we use the LSTM model to enhance the low-cost sensor data, we can significantly improve the accuracy of emission rate estimates.
-The coorelation of raw low-cost sensor data to high-cost sensor data is calculated in Tables \ref{tab:lstmerrorco2} and \ref{tab:lstmerrorpm}, along with the coorelation of LSTM enhanced data based purely off of the two low-cost sensors inputs.
+The correlation between raw low-cost sensor data and high-cost sensor data is calculated in Tables \ref{tab:lstmerrorco2} and \ref{tab:lstmerrorpm}, along with the correlation of LSTM-enhanced data that is based solely on the two low-cost sensor inputs.
 
 \begin{table}[h!]
 \centering
@@ -403,7 +408,7 @@ R$^2$ &      0.00956 &     -0.15314 &     0.91287 \\
 
 \begin{table}[h!]
 \centering
-\caption{Metrics of how well low-cost PM sensors and ML prediction compare to Dekati PM on testing set of data (5 tests)}
+\caption{Metrics of how well low-cost PM sensors and ML prediction compare to Dekati PM on the testing set of data (5 tests)}
 \label{tab:lstmerrorpm}
 \begin{tabular}{lrrr}
 \toprule
@@ -419,10 +424,10 @@ R$^2$ &    -0.16500 &     0.58177 &    0.93205 \\
 \end{tabular}
 \end{table}
 
-This shows that the LSTM leads a clear improvement over the low-cost sensors alone, especially when using $R^2$ as the metric.
-This improved data also leads to better emission rate estimates.
-In order to make a fair comparison, we only compared the emisison rates calculated form the 5 tests that were reserved for testing the LSTM model.
-These results are summarized in table \ref{tab:emissionerrorlab_ml}. 
+This shows that the LSTM leads to a clear improvement over the low-cost sensors alone, especially when using $R^2$ as the metric.
+This improved data also yields better estimates of emission rates.
+To make a fair comparison, we only compared the emission rates calculated from the 5 tests reserved for testing the LSTM model.
+These results are summarized in Table \ref{tab:emissionerrorlab_ml}. 
 
 \begin{table}[h!]
 \centering
@@ -454,11 +459,11 @@ SPS30/MH-Z16         & 8079.576 & 17 \\
 \end{tabular}
 \end{table}
 
-We can see that the LSTM improved the error percentage of the emission rate estimates.
-Although the error of the best low-cost sensor combination (48\%) was lower on this smaller dataset, the rates predicted by a combination of the LSTM enhanced PM data and the LSTM enhanced CO$_2$ data still improved to a mean error 18\%.
+We can see that the LSTM reduced the mean error of emission rate estimates.
+Although the error of the best low-cost sensor combination (48\%) was lower on this smaller dataset, the rates predicted by a combination of LSTM-enhanced PM data and LSTM-enhanced CO$_2$ data still improved to a mean error of 18\%.
 While this improvement on raw emission rates is promising, the motivating question of our work is whether low-cost sensors could identify high-emitting trucks.
 To evaluate this, we compared whether the highest emission rates measured by the low-cost sensors happened on the same peaks as the highest emission rates measured by the high-cost sensors
-The results in table \ref{tab:percentmatchlab_ml} are also only calculated on the test set of five laboratory experiments to make it a fair comparison for the ML predictions.
+The results in table \ref{tab:percentmatchlab_ml} are also calculated only on the test set of five laboratory experiments to ensure a fair comparison with the ML predictions.
 
 \renewcommand\theadfont{\small}
 \begin{table}[h!]
@@ -492,17 +497,17 @@ SPS30/MH-Z16       &    0.0  &    0.0  &  25.0 \\
 \end{tabular}
 \end{table}
 
-These results also show significant improvement when using the LSTM enhanced data.
-The combination of LSTM enhanced PM and CO$_2$ data identified a greater percent of high-emitters than any combination of two low-cost sensors.
-However, only 33\% match in the top 10\% is not very high, but is also a byproduct of the small sample size for that group.
-Although machine learning significaly improved the emission rate estimates and high-emitter identification of low-cost sensors, the mean error and top X-percent matchin metrics are not what would be desired for widespread use.
+These results also show significant improvement when using the LSTM-enhanced data.
+The combination of LSTM-enhanced PM and CO$_2$ data identified a higher percentage of high emitters than any combination of two low-cost sensors.
+However, only a 33\% match in the top 10\% is not very high, but it is also a byproduct of the small sample size for that group.
+Although machine learning significantly improved the estimates of emission rates and the identification of high emitters by low-cost sensors, the mean error and top X-percent matching metrics are not what would be desired for widespread use.
 
 \subsection{Deployment}
 
 As mentioned before, the sensors performed much worse in the field, with the most viable data coming from the high-cost CO$_2$ sensor and the NO$_x$ sensors.
 The reduced performance of our sensors is most likely due to the challenge of capturing a strong sample of exhaust from a passing vehicle.
 The absolute emission rates calculated by the Alphasense differed substantially from those measured by the high-cost Ecophysics instrument (Table \ref{tab:emissionerrornox}), with a mean error of 720\%.
-This large difference is despite the fact that both sensors used the same high-cost CO$_2$ sensor for dilution calculation.
+This large difference occurs despite both sensors using the same high-cost CO$_2$ sensor for dilution calculations.
 
 \begin{table}[htbp]
 \centering
@@ -518,7 +523,7 @@ alphasense/licor     & 720.951  & 104 \\
 \end{tabular}
 \end{table}
 
-The results of how well LSTM enhance data compares to the high-cost Ecophysics data is summarized in Table \ref{tab:lstmerrornox}.
+The results of how well LSTM-enhanced data compares to the high-cost Ecophysics data are summarized in Table \ref{tab:lstmerrornox}.
 
 \begin{table}[h!]
 \centering
@@ -537,9 +542,9 @@ R$^2$ &    -0.03560  &   0.57955 \\
 \label{tab:lstmerrornox}
 \end{table}
 
-While the LSTM did improve correlation significantly, it was not able to match the high-cost data as well as the ML models for the lab data.
-The LSTM well matching low-cost data when peaks were large, but most of the peaks in the field deployment were small and close to the noise level of the low-cost sensor.
-The performance of this LSTM enhance data on emission rates for the testing dataset is summarized in Tables \ref{tab:emissionerrorperryml} and \ref{tab:percentmatchnoxml}.
+While the LSTM did improve correlation significantly, it did not match the high-cost data as well as the ML models for the lab data.
+The LSTM performed well at matching low-cost data when peaks were large, but most peaks in the field deployment were small and close to the noise level of the low-cost sensor.
+The performance of this LSTM-enhanced data on emission rates for the testing dataset is summarized in Tables \ref{tab:emissionerrorperryml} and \ref{tab:percentmatchnoxml}.
 
 \begin{table}[htbp]
 \centering
@@ -576,27 +581,27 @@ NO$_x$-Pred/Licor     & 115.338  & 23 \\
 \end{table}
 
 Interestingly, while the LSTM improved the mean error of emission rates from 225\% to 115\%, it did not improve the ability to identify high-emitting trucks.
-The shows the the Alphasense NO-B4 sensor has a strong ability to comparatively identify high-emitting trucks when paired with a high-cost CO$_2$ sensor.
-Another reason for the improved performance in top X-percent matching from the low-cost sensor alond could be that there is more true variability in emission rates encountered in the field compared to the lab, where every peak came from the same engine.
+The shows the Alphasense NO-B4 sensor has a strong ability to comparatively identify high-emitting trucks when paired with a high-cost CO$_2$ sensor.
+Another reason for the improved performance in top X-percent matching from the Alphasense low-cost sensor is likely that there is greater variability in emission rates encountered in the field than in the lab, where every peak came from the same engine.
 
 \section{Conclusion}
 
 Heavy-duty on-road vehicles remain a significant source of harmful pollutants, including NO$_x$, and Particulate Matter.
 One strategy for characterizing real-world emissions is roadside emission monitoring, which provides an in-use external evaluation of passing vehicles.
-We investigated the use of low-cost sensors for roadside emissions monitoring, by comparing them to high-cost reference instruments in both laboratory and real-world settings.
+We investigated the use of low-cost sensors for roadside emissions monitoring by comparing them to high-cost reference instruments in both laboratory and real-world settings.
 
-We developed a reliabled low-cost data acquisition system for collecting, storing, and visualizing data from multiple low- and high-cost sensors.
-With the data we collected, we calculated emission rates for peaks in the data and compared the performance of low-cost sensors to high-cost sensors.
-We found that using an LSTM network, we could significantly improve the correlation of low-cost sensor data to high-cost sensor data for short term windoes of data samplede every 2 seconds.
+We developed a reliable low-cost data acquisition system for collecting, storing, and visualizing data from multiple low- and high-cost sensors.
+Using the data we collected, we calculated emission rates for peaks in the data and compared the performance of low-cost sensors with that of high-cost sensors.
+We found that using an LSTM network could significantly improve the correlation between low-cost and high-cost sensor data for short-term windows sampled every 2 seconds.
 The ability of LSTMs to learn temporal patterns helped correct for the slow response time of low-cost sensors.
 
 This improved data led to better emission rate estimates from low-cost PM and CO2 sensors in laboratory testing, reducing the mean error from over 60\% to under 20\%.
-The LSTM enhanced data also improved the ability of low-cost sensors to correctly identify the top 10-30\% of peaks with the highest PM emission rates in the laboratory.
-In the field deployment, the LSTM also improved the mean error of NO emission rates from the low-cost sensor, but did not improve the ability to identify high-emitting trucks compared to the raw low-cost sensor data.
+The LSTM-enhanced data also improved the ability of low-cost sensors to correctly identify the top 10-30\% of peaks with the highest PM emission rates in the laboratory.
+In the field deployment, the LSTM also reduced the mean error in NO emission rates from the low-cost sensor, but did not improve the ability to identify high-emitting trucks compared to raw low-cost sensor data.
 
 Overall, our results show that low-cost sensors have potential for roadside emissions monitoring, especially when combined with machine learning techniques to enhance data quality.
 Low-cost sensors and machine learning models perform best when there is a strong signal to capture, which can be challenging in real-world roadside deployments.
-Further work is needed to improve the reliability of low-cost sensors in field deployments, and to explore the transferability of machine learning models across different settings and sensor units.
+Further work is needed to improve the reliability of low-cost sensors in field deployments and to explore the transferability of machine learning models across different settings and sensor units.
 
 %%
 %% The next two lines define the bibliography style to be used, and
